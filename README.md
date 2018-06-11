@@ -12,12 +12,11 @@
 
 ### Please be aware:
 * Tested on Ubuntu only
-* Your distro's outdated hashcat/nvidia variants are not used
+* Your distro's outdated hashcat/nvidia variants are not used in favor of the latest offical binaries
 
 <br>
 
 ### Usage:
-**Server:**
 ~~~
-$ ./crackhaws.sh
+$ sudo ./crackhaws.sh
 ~~~
