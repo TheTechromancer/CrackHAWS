@@ -39,15 +39,17 @@ package_install()
 
 	printf '\n[+] Updating system\n'
 	printf '    - apt-get update\n'
-	apt-get -y update >>"$logfile" 2>&1
+	apt-get -y update 2>&1 | tee -a "$logfile"
 	printf '    - apt-get upgrade\n'
-	apt-get -y upgrade >>"$logfile" 2>&1
+	apt-get -y upgrade 2>&1 | tee -a "$logfile"
 
 	printf '\n[+] Installing dependencies\n'
 	printf "    - apt-get install build-essential linux-headers-$(uname -r) p7zip-full\n"
 	apt-get -y install build-essential linux-headers-$(uname -r) p7zip-full >>"$logfile" 2>&1
-	# install other dependencies
-	# apt-get -y install linux-source linux-image-extra-virtual
+
+	# dependencies for hcxtools and hcxdumptool
+	# printf "    - apt-get -y install libssl-dev zlib1g-dev libcurl4-openssl-dev\n"
+	# apt-get -y install libssl-dev zlib1g-dev libcurl4-openssl-dev >>"$logfile" 2>&1
 
 }
 
