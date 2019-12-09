@@ -4,6 +4,9 @@
 
 logfile='/var/log/nvidia_driver_install.log'
 
+# enable command aliasing
+shopt -s expand_aliases
+
 # skip prompts in apt-upgrade, etc.
 export DEBIAN_FRONTEND=noninteractive
 alias apt-get='apt-get -o Dpkg::Options::="--force-confdef" -y'
@@ -70,7 +73,7 @@ hashcat_install()
     wget "https://hashcat.net$hashcat_download_link" || printf '\n[!] Failed to download hashcat\n\n'
 
     # extract and delete archive
-    7z x 'hashcat-*.7z' 2>&1 >>"$logfile"
+    7z x 'hashcat-*.7z' 2>&1 | tee -a "$logfile"
     rm hashcat-*.7z
     #rm -r hashcat >/dev/null 2>&1
     mv hashcat* hashcat
@@ -169,6 +172,7 @@ nvidia_runtime_install()
     apt-get update
     apt-get install nvidia-container-runtime
 
+    mkdir /etc/docker 2>/dev/null
     tee /etc/docker/daemon.json <<EOF
 {
     "runtimes": {
