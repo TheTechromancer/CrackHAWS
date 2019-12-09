@@ -5,6 +5,7 @@
 * No arguments or user interaction required
 * Installs latest version of hashcat (from hashcat.net)
 * Installs latest Nvidia driver (from nvidia.com)
+* Installs latest Nvidia Docker runtime (from nvidia.com)
 
 ### Please be aware:
 * Tested on Ubuntu only
