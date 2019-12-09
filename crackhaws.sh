@@ -6,7 +6,7 @@ logfile='/var/log/nvidia_driver_install.log'
 
 # skip prompts in apt-upgrade, etc.
 export DEBIAN_FRONTEND=noninteractive
-alias apt-get='-o Dpkg::Options::="--force-confdef" -y'
+alias apt-get='apt-get -o Dpkg::Options::="--force-confdef" -y'
 
 
 check_root()
@@ -48,7 +48,7 @@ package_install()
 
     printf '\n[+] Installing dependencies\n'
     printf "    - apt-get install build-essential linux-headers-$(uname -r) p7zip-full\n"
-    apt-get install build-essential linux-headers-$(uname -r) p7zip-full >>"$logfile" 2>&1
+    apt-get install build-essential linux-headers-$(uname -r) p7zip-full 2>&1 | tee -a "$logfile"
 
     # dependencies for hcxtools and hcxdumptool
     # printf "    - apt-get install libssl-dev zlib1g-dev libcurl4-openssl-dev\n"
@@ -70,7 +70,7 @@ hashcat_install()
     wget "https://hashcat.net$hashcat_download_link" || printf '\n[!] Failed to download hashcat\n\n'
 
     # extract and delete archive
-    7z x 'hashcat-*.7z' >>"$logfile" 2>&1
+    7z x 'hashcat-*.7z' 2>&1 >>"$logfile"
     rm hashcat-*.7z
     #rm -r hashcat >/dev/null 2>&1
     mv hashcat* hashcat
@@ -155,21 +155,6 @@ EOF
 
     printf '\n[+] Preparation finished.\n\n'
 
-    read -p "[?] Reboot? (Y/N)" -r
-    
-    printf '\n[+] After reboot, feel free to check if driver is working:\n\n     $ lsmod | grep nvidia$\n'
-    printf "\n[+] Installation log is at $driver_log_file\n\n"
-
-    sleep 4
-
-    if [[ $REPLY =~ ^[Yy]$ ]]
-    then
-        reboot
-    else
-        printf '[!] Please reboot "whenever"\n\n'
-        exit 2
-    fi
-
 }
 
 
@@ -183,6 +168,19 @@ nvidia_runtime_install()
     curl -s -L https://nvidia.github.io/nvidia-container-runtime/$distribution/nvidia-container-runtime.list | tee /etc/apt/sources.list.d/nvidia-container-runtime.list
     apt-get update
     apt-get install nvidia-container-runtime
+
+    tee /etc/docker/daemon.json <<EOF
+{
+    "runtimes": {
+        "nvidia": {
+            "path": "/usr/bin/nvidia-container-runtime",
+            "runtimeArgs": []
+        }
+    }
+}
+EOF
+
+    systemctl restart docker
 
 }
 
@@ -209,6 +207,23 @@ main()
     driver_download
 
     prepare_driver_install
+
+    nvidia_runtime_install
+
+    read -p "[?] Reboot? (Y/N)" -r
+    
+    printf '\n[+] After reboot, feel free to check if driver is working:\n\n     $ lsmod | grep nvidia$\n'
+    printf "\n[+] Installation log is at $driver_log_file\n\n"
+
+    sleep 4
+
+    if [[ $REPLY =~ ^[Yy]$ ]]
+    then
+        reboot
+    else
+        printf '[!] Please reboot "whenever"\n\n'
+        exit 2
+    fi
 
 }
 
