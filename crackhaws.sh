@@ -81,7 +81,7 @@ hashcat_install()
     printf '\n[+] Successfully installed hashcat to /opt/hashcat\n'
 
     # create symlink so it's in $PATH
-    ln -s /opt/hashcat/hashcat64.bin /usr/bin/hashcat 2>>"$logfile" && printf '\n[+] Successfully added hashcat to $PATH\n'
+    ln -s /opt/hashcat/hashcat.bin /usr/bin/hashcat 2>>"$logfile" && printf '\n[+] Successfully added hashcat to $PATH\n'
 
 }
 
@@ -170,7 +170,7 @@ nvidia_runtime_install()
     distribution=$(. /etc/os-release;echo $ID$VERSION_ID)
     curl -s -L https://nvidia.github.io/nvidia-container-runtime/$distribution/nvidia-container-runtime.list | tee /etc/apt/sources.list.d/nvidia-container-runtime.list
     apt-get update
-    apt-get install nvidia-container-runtime
+    apt-get install nvidia-container-runtime docker.io
 
     mkdir /etc/docker 2>/dev/null
     tee /etc/docker/daemon.json <<EOF

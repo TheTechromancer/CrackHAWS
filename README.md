@@ -1,6 +1,8 @@
 # CrackHAWS
 ### A road warrior AWS hashcat setup script
 
+## NOTE: NOWADAYS, THE BEST WAY TO GET WORKING DRIVERS IS JUST TO USE THE AMAZON LINUX GPU AMI
+
 ### Features:
 * No arguments or user interaction required
 * Installs latest version of hashcat (from hashcat.net)
